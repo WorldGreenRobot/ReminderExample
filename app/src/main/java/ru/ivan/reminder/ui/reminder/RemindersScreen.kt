@@ -40,7 +40,7 @@ fun RemindersScreen(
         }
     }
 
-
+/*
     if (showDatePickerDialog.value) {
         DatePickerModal(
             onDateSelected = {
@@ -50,7 +50,7 @@ fun RemindersScreen(
                 showDatePickerDialog.value = false
             },
         )
-    }
+    }*/
 
     RemindersContent(
         state = state,

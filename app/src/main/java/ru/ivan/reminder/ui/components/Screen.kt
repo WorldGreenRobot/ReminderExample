@@ -20,14 +20,14 @@ fun Screen(
     ) {
         Box(
             modifier = Modifier.padding(it)
-                .background(
+           /*     .background(
                     Brush.linearGradient(
                         colors = listOf(
                             colorResource(id = R.color.black),
                             colorResource(id = R.color.navy)
                         )
                     )
-                )
+                )*/
         ) {
             content()
         }
