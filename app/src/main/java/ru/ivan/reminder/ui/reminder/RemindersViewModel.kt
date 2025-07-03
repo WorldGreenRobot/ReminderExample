@@ -5,18 +5,21 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 import ru.ivan.reminder.data.repository.ReminderRepository
+import ru.ivan.reminder.utils.DateUtils.formatDDMMYYYY
 import ru.ivan.reminder.utils.DateUtils.parseDDMMYYYYDate
+import java.util.Calendar
 
 class RemindersViewModel(
     private val reminderRepository: ReminderRepository,
-): ViewModel(), ContainerHost<RemindersUiState, RemindersSideEffect> {
-    override val container: Container<RemindersUiState, RemindersSideEffect> = container(RemindersUiState())
+) : ViewModel(), ContainerHost<RemindersUiState, Nothing> {
+    override val container: Container<RemindersUiState, Nothing> =
+        container(RemindersUiState())
 
     init {
         loadData()
     }
 
-    private fun loadData() = intent{
+    private fun loadData() = intent {
         try {
             reduce {
                 state.copy(
@@ -29,11 +32,11 @@ class RemindersViewModel(
             reduce {
                 state.copy(
                     skeleton = false,
-                    refresh =  false,
+                    refresh = false,
                     data = reminders
                 )
             }
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             reduce {
                 state.copy(
                     refresh = false,
@@ -43,7 +46,7 @@ class RemindersViewModel(
         }
     }
 
-    fun changeReminder(reminder: String) = intent{
+    fun changeReminder(reminder: String) = intent {
         reduce {
             state.copy(
                 reminder = reminder
@@ -51,9 +54,61 @@ class RemindersViewModel(
         }
     }
 
-    fun showDatePicker(date: String) = intent{
-        postSideEffect(
-            RemindersSideEffect.ShowDialogDate(date.parseDDMMYYYYDate()?.time ?: 0)
-        )
+    fun showDatePicker() = intent {
+        reduce {
+            val currentDateMillisecond = state.date?.parseDDMMYYYYDate()?.time
+            val calendar = Calendar.getInstance()
+            val newCalendar = if (currentDateMillisecond != null) {
+                calendar.timeInMillis = currentDateMillisecond
+                calendar
+            } else {
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+                calendar
+            }
+            newCalendar.add(Calendar.DAY_OF_MONTH, 1)
+
+            state.copy(
+                dialogs = state.dialogs + RemindersDialogs.ShowDialogDate(
+                    generateCalendarForMillisecond(newCalendar)
+                )
+            )
+        }
+    }
+
+    fun showTimePicker() = intent{
+        reduce {
+            state.copy(
+                dialogs = state.dialogs + RemindersDialogs.ShowDialogTime(
+                    1,
+                    2
+                )
+            )
+        }
+    }
+
+    private fun generateCalendarForMillisecond(calendar: Calendar): Long {
+        return calendar.timeInMillis
+    }
+
+    fun setNewDate(date: Long?) = intent {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = date ?: 0
+
+        reduce {
+            state.copy(
+                date = calendar.time.formatDDMMYYYY()
+            )
+        }
+    }
+
+    fun closeDialog(dialog: RemindersDialogs) = intent {
+        reduce {
+            state.copy(
+                dialogs = state.dialogs - dialog
+            )
+        }
     }
 }

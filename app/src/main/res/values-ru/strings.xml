@@ -14,4 +14,7 @@
     <string name="toast_reminder_removed">Напоминание удалено!</string>
     <string name="new_reminder">Новое напоминание!</string>
     <string name="cancel">Отменить</string>
+    <string name="date">Дата</string>
+    <string name="time">Время</string>
+    <string name="select_time">Выбор времени</string>
 </resources>

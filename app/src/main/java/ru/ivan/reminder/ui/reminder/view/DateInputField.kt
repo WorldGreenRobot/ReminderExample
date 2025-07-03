@@ -8,24 +8,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import ru.ivan.reminder.R
 
 @Composable
 fun DateInputField(
     date: String,
     onValueChange: (String) -> Unit,
-    onClickDate: (String) -> Unit = {},
+    onClickDate: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     TextField(
         value = date,
         onValueChange = onValueChange,
-        label = { Text("Date") },
+        label = { Text(stringResource(R.string.date)) },
         modifier = modifier,
         interactionSource = remember { MutableInteractionSource() }.also {
             LaunchedEffect(it) {
                 it.interactions.collect {
                     if (it is PressInteraction.Release) {
-                        onClickDate(date)
+                        onClickDate()
                     }
                 }
             }

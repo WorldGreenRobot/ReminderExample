@@ -9,9 +9,11 @@ data class RemindersUiState (
     val reminder: String? = null,
     val date: String? = null,
     val time: String? = null,
-    val error: String? = null
+    val error: String? = null,
+    val dialogs: List<RemindersDialogs> = emptyList()
 )
 
-sealed interface RemindersSideEffect {
-    data class ShowDialogDate(val milliseconds: Long) : RemindersSideEffect
+sealed interface RemindersDialogs{
+    data class ShowDialogDate(val milliseconds: Long) : RemindersDialogs
+    data class ShowDialogTime(val hours: Int, val minutes: Int) : RemindersDialogs
 }

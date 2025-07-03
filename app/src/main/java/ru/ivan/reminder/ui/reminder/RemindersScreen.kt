@@ -8,17 +8,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import org.koin.compose.viewmodel.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import ru.ivan.reminder.domain.Reminder
 import ru.ivan.reminder.ui.components.Screen
-import ru.ivan.reminder.ui.dialog.DatePickerModal
+import ru.ivan.reminder.ui.dialog.DatePickerModalDialog
+import ru.ivan.reminder.ui.dialog.TimePickerModelDialog
 import ru.ivan.reminder.ui.reminder.view.InputForm
 import ru.ivan.reminder.ui.reminder.view.ReminderItem
 
@@ -29,25 +28,16 @@ fun RemindersScreen(
 
     val state by viewModel.collectAsState()
 
-    val showDatePickerDialog = remember { mutableStateOf(false) }
-
-    viewModel.collectSideEffect {
-        when (it) {
-            is RemindersSideEffect.ShowDialogDate -> {
-                showDatePickerDialog.value = true
-            }
-        }
-    }
-
-    if(showDatePickerDialog.value) {
-
-    }
-
     RemindersContent(
         state = state,
         onAction = {
             actionHandler(it, viewModel)
         }
+    )
+
+    Dialogs(
+        dialogs = state.dialogs,
+        viewModel = viewModel
     )
 }
 
@@ -72,7 +62,10 @@ private fun RemindersContent(
                     onAction(RemindersAction.ChangeReminder(it))
                 },
                 onClickDate = {
-                    onAction(RemindersAction.DataDialog(it))
+                    onAction(RemindersAction.DataDialog)
+                },
+                onClickTime = {
+                    onAction(RemindersAction.TimeDialog)
                 }
             )
             LazyColumn(
@@ -91,6 +84,37 @@ private fun RemindersContent(
     }
 }
 
+@Composable
+private fun Dialogs(dialogs: List<RemindersDialogs>, viewModel: RemindersViewModel) {
+
+    dialogs.fastForEach { dialog ->
+        when (dialog) {
+            is RemindersDialogs.ShowDialogDate -> {
+                DatePickerModalDialog(
+                    milliseconds = dialog.milliseconds,
+                    onDateSelected = {
+                        viewModel.setNewDate(it)
+                    },
+                    onDismiss = {
+                        viewModel.closeDialog(dialog)
+                    }
+                )
+            }
+
+            is RemindersDialogs.ShowDialogTime -> {
+                TimePickerModelDialog(
+                    onCancel = {
+                        viewModel.closeDialog(dialog)
+                    },
+                    onConfirm = {
+
+                    }
+                )
+            }
+        }
+    }
+}
+
 private fun actionHandler(action: RemindersAction, viewModel: RemindersViewModel) {
     when (action) {
         is RemindersAction.ChangeReminder -> {
@@ -98,14 +122,19 @@ private fun actionHandler(action: RemindersAction, viewModel: RemindersViewModel
         }
 
         is RemindersAction.DataDialog -> {
-            viewModel.showDatePicker(action.date)
+            viewModel.showDatePicker()
+        }
+
+        is RemindersAction.TimeDialog -> {
+            viewModel.showTimePicker()
         }
     }
 }
 
 sealed interface RemindersAction {
     data class ChangeReminder(val text: String) : RemindersAction
-    data class DataDialog(val date: String) : RemindersAction
+    data object DataDialog : RemindersAction
+    data object TimeDialog : RemindersAction
 }
 
 @Composable

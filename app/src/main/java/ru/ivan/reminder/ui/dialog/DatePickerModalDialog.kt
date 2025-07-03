@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import ru.ivan.reminder.R
 
 @Composable
-fun DatePickerModal(
+fun DatePickerModalDialog(
     milliseconds: Long,
     onDateSelected: (Long?) -> Unit,
     onDismiss: () -> Unit,

@@ -60,5 +60,6 @@ dependencies {
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.bundles.orbit)
     implementation(libs.bundles.room)
+    implementation(libs.material.icons.extended)
     ksp(libs.room.compiler)
 }
