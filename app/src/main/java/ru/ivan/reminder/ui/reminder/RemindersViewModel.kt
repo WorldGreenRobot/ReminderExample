@@ -5,6 +5,7 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 import ru.ivan.reminder.data.repository.ReminderRepository
+import ru.ivan.reminder.utils.DateUtils.parseDDMMYYYYDate
 
 class RemindersViewModel(
     private val reminderRepository: ReminderRepository,
@@ -52,7 +53,7 @@ class RemindersViewModel(
 
     fun showDatePicker(date: String) = intent{
         postSideEffect(
-            RemindersSideEffect.ShowDialogDate(date)
+            RemindersSideEffect.ShowDialogDate(date.parseDDMMYYYYDate()?.time ?: 0)
         )
     }
 }

@@ -13,5 +13,5 @@ data class RemindersUiState (
 )
 
 sealed interface RemindersSideEffect {
-    data class ShowDialogDate(private val date: String) : RemindersSideEffect
+    data class ShowDialogDate(val milliseconds: Long) : RemindersSideEffect
 }

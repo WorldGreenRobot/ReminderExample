@@ -1,5 +1,6 @@
 package ru.ivan.reminder.ui.reminder.view
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,7 +35,8 @@ fun InputForm(
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
             text = stringResource(id = R.string.form_title),
@@ -71,10 +73,7 @@ fun InputForm(
             },
             modifier = Modifier
                 .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-                .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
-            )
+                .fillMaxWidth()
         ) {
             Text(
                 text = stringResource(R.string.form_create),

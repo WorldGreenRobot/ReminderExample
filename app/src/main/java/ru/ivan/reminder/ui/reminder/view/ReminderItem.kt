@@ -38,8 +38,7 @@ fun ReminderItem(
         Text(
             text = reminder.text,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = Color.White
+            overflow = TextOverflow.Ellipsis
         )
         Spacer(
             modifier = Modifier.weight(1f)

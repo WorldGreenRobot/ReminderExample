@@ -1,6 +1,5 @@
 package ru.ivan.reminder.ui.reminder
 
-import android.app.DatePickerDialog
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -40,17 +39,9 @@ fun RemindersScreen(
         }
     }
 
-/*
-    if (showDatePickerDialog.value) {
-        DatePickerModal(
-            onDateSelected = {
+    if(showDatePickerDialog.value) {
 
-            },
-            onDismiss = {
-                showDatePickerDialog.value = false
-            },
-        )
-    }*/
+    }
 
     RemindersContent(
         state = state,
