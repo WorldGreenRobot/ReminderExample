@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class Reminder(
-    val id: Int,
+    val id: Int = 0,
     val text: String,
     val date: String,
     val time: String

@@ -5,6 +5,7 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 import ru.ivan.reminder.data.repository.ReminderRepository
+import ru.ivan.reminder.domain.Reminder
 import ru.ivan.reminder.utils.DateUtils.formatDDMMYYYY
 import ru.ivan.reminder.utils.DateUtils.parseDDMMYYYYDate
 import java.util.Calendar
@@ -125,11 +126,35 @@ class RemindersViewModel(
         }
     }
 
+    fun updateTime(time: String) = intent {
+        reduce {
+            state.copy(
+                timeString = time
+            )
+        }
+    }
+
     fun closeDialog(dialog: RemindersDialogs) = intent {
         reduce {
             state.copy(
                 dialogs = state.dialogs - dialog
             )
         }
+    }
+
+    fun addReminder() = intent {
+        reminderRepository.addReminder(
+            Reminder(
+                text = state.reminder.orEmpty(),
+                date = state.date.orEmpty(),
+                time = state.timeString.orEmpty()
+            )
+        )
+        loadData()
+    }
+
+    fun removeReminder(id: Int) = intent {
+        reminderRepository.removeReminder(id)
+        loadData()
     }
 }

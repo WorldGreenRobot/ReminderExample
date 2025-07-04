@@ -11,6 +11,7 @@ data class RemindersUiState(
     val reminder: String? = null,
     val date: String? = null,
     val time: TimeData? = null,
+    val timeString: String? = null,
     val error: String? = null,
     val dialogs: List<RemindersDialogs> = emptyList()
 ) {

@@ -26,7 +26,7 @@ fun ReminderItem(
     reminder: Reminder,
     modifier: Modifier = Modifier,
     onClick: (Reminder) -> Unit = {},
-    remove: (Reminder) -> Unit = {}
+    onRemove: (Int) -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -49,7 +49,7 @@ fun ReminderItem(
         )
 
         IconButton(
-            onClick = { remove(reminder) },
+            onClick = { onRemove(reminder.id) },
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_delete),

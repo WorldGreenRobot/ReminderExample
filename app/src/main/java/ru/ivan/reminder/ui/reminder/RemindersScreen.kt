@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,17 +47,23 @@ private fun RemindersContent(
     state: RemindersUiState,
     onAction: (RemindersAction) -> Unit = {},
 ) {
+
+    val time = state.time?.getTimeString().orEmpty()
+
+    LaunchedEffect(time) {
+        onAction(RemindersAction.UpdateTime(time))
+    }
+
     Screen(
         modifier = Modifier.fillMaxSize(),
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-
             InputForm(
                 reminderText = state.reminder.orEmpty(),
                 date = state.date.orEmpty(),
-                time = state.time?.getTimeString().orEmpty(),
+                time = time,
                 modifier = Modifier.padding(16.dp),
                 onValueChangeReminder = {
                     onAction(RemindersAction.ChangeReminder(it))
@@ -66,6 +73,9 @@ private fun RemindersContent(
                 },
                 onClickTime = {
                     onAction(RemindersAction.TimeDialog)
+                },
+                onCreateReminder = {
+                    onAction(RemindersAction.AddReminder)
                 }
             )
             LazyColumn(
@@ -76,7 +86,10 @@ private fun RemindersContent(
                 items(state.data.orEmpty(), key = { it.id }) {
                     ReminderItem(
                         reminder = it,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        onRemove = {
+                            onAction(RemindersAction.RemoveReminder(it))
+                        }
                     )
                 }
             }
@@ -132,13 +145,27 @@ private fun actionHandler(action: RemindersAction, viewModel: RemindersViewModel
         is RemindersAction.TimeDialog -> {
             viewModel.showTimePicker()
         }
+
+        is RemindersAction.UpdateTime -> {
+            viewModel.updateTime(action.time)
+        }
+
+        is RemindersAction.AddReminder -> {
+            viewModel.addReminder()
+        }
+        is RemindersAction.RemoveReminder -> {
+            viewModel.removeReminder(action.id)
+        }
     }
 }
 
 sealed interface RemindersAction {
     data class ChangeReminder(val text: String) : RemindersAction
+    data class UpdateTime(val time: String) : RemindersAction
     data object DataDialog : RemindersAction
     data object TimeDialog : RemindersAction
+    data object AddReminder : RemindersAction
+    data class RemoveReminder(val id: Int) : RemindersAction
 }
 
 @Composable

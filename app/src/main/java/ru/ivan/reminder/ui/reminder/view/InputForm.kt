@@ -31,6 +31,7 @@ fun InputForm(
     onClickTime: () -> Unit = {},
     onValueChangeDate: (String) -> Unit = {},
     onValueChangeTime: (String) -> Unit = {},
+    onCreateReminder: () -> Unit = {}
 ) {
     Column(
         modifier = modifier,
@@ -67,9 +68,7 @@ fun InputForm(
                 .fillMaxWidth()
         )
         Button(
-            onClick = {
-
-            },
+            onClick = onCreateReminder,
             modifier = Modifier
                 .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
                 .fillMaxWidth()

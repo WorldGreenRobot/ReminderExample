@@ -12,7 +12,7 @@ class ReminderRepositoryImpl(
     private val reminderDao: ReminderDao
 ) : ReminderRepository {
 
-    override suspend fun insert(reminder: Reminder) {
+    override suspend fun addReminder(reminder: Reminder) {
         withContext(Dispatchers.IO) {
             reminderDao.insert(reminder.mapToDatabase())
         }
@@ -21,6 +21,12 @@ class ReminderRepositoryImpl(
     override suspend fun getAllReminder(): List<Reminder> {
         return withContext(Dispatchers.IO){
             reminderDao.getAll().map { it.mapToDomain() }
+        }
+    }
+
+    override suspend fun removeReminder(id: Int) {
+        return withContext(Dispatchers.IO){
+            reminderDao.delete(id)
         }
     }
 }
