@@ -78,12 +78,20 @@ class RemindersViewModel(
         }
     }
 
-    fun showTimePicker() = intent{
+    fun showTimePicker() = intent {
+        val calendar = Calendar.getInstance()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        val is24hour = calendar.get(Calendar.AM_PM) == Calendar.AM
+        val isAfternoon = calendar.get(Calendar.AM_PM) == Calendar.PM
+
         reduce {
             state.copy(
                 dialogs = state.dialogs + RemindersDialogs.ShowDialogTime(
-                    1,
-                    2
+                    hour = hour,
+                    minute = minute,
+                    is24hour = is24hour,
+                    isAfternoon = isAfternoon
                 )
             )
         }
@@ -100,6 +108,19 @@ class RemindersViewModel(
         reduce {
             state.copy(
                 date = calendar.time.formatDDMMYYYY()
+            )
+        }
+    }
+
+    fun setNewTime(hour: Int, minute: Int, is24hour: Boolean, isAfternoon: Boolean) = intent {
+        reduce {
+            state.copy(
+                time = RemindersUiState.TimeData(
+                    hour = hour,
+                    minute = minute,
+                    is24hour = is24hour,
+                    isAfternoon = isAfternoon
+                )
             )
         }
     }

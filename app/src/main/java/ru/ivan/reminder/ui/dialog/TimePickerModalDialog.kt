@@ -45,38 +45,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import ru.ivan.reminder.R
-import java.util.Calendar
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerModelDialog(
-    onCancel: () -> Unit,
-    onConfirm: (Calendar) -> Unit,
+    hour: Int,
+    minute: Int,
+    is24hour: Boolean,
+    isAfternoon: Boolean,
+    onDismissRequest: () -> Unit,
+    onConfirm: (hour: Int, minute: Int, is24hour: Boolean, isAfternoon: Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    val time = Calendar.getInstance()
-    time.timeInMillis = System.currentTimeMillis()
-
     var mode: DisplayMode by remember { mutableStateOf(DisplayMode.Picker) }
     val timeState: TimePickerState = rememberTimePickerState(
-        initialHour = time[Calendar.HOUR_OF_DAY],
-        initialMinute = time[Calendar.MINUTE],
+        initialHour = hour,
+        initialMinute = minute,
+        is24Hour = is24hour
     )
-
-    fun onConfirmClicked() {
-        val cal = Calendar.getInstance()
-        cal.set(Calendar.HOUR_OF_DAY, timeState.hour)
-        cal.set(Calendar.MINUTE, timeState.minute)
-        cal.isLenient = false
-
-        onConfirm(cal)
-    }
+    timeState.isAfternoon = isAfternoon
 
     PickerDialog(
         modifier = modifier,
-        onDismissRequest = onCancel,
+        onDismissRequest = onDismissRequest,
         title = { Text(stringResource(R.string.select_time)) },
         buttons = {
             DisplayModeToggleButton(
@@ -84,13 +75,21 @@ fun TimePickerModelDialog(
                 onDisplayModeChange = { mode = it },
             )
             Spacer(Modifier.weight(1f))
-            TextButton(onClick = onCancel) {
+            TextButton(onClick = onDismissRequest) {
                 Text(stringResource(R.string.cancel))
             }
-            TextButton(onClick = ::onConfirmClicked) {
+            TextButton(onClick = {
+                onConfirm(
+                    timeState.hour,
+                    timeState.minute,
+                    timeState.is24hour,
+                    timeState.isAfternoon
+                )
+                onDismissRequest()
+            }) {
                 Text(stringResource(R.string.ok))
             }
-        },
+        }
     ) {
         val contentModifier = Modifier.padding(horizontal = 24.dp)
         when (mode) {

@@ -56,7 +56,7 @@ private fun RemindersContent(
             InputForm(
                 reminderText = state.reminder.orEmpty(),
                 date = state.date.orEmpty(),
-                time = state.time.orEmpty(),
+                time = state.time?.getTimeString().orEmpty(),
                 modifier = Modifier.padding(16.dp),
                 onValueChangeReminder = {
                     onAction(RemindersAction.ChangeReminder(it))
@@ -103,11 +103,15 @@ private fun Dialogs(dialogs: List<RemindersDialogs>, viewModel: RemindersViewMod
 
             is RemindersDialogs.ShowDialogTime -> {
                 TimePickerModelDialog(
-                    onCancel = {
+                    hour = dialog.hour,
+                    minute = dialog.minute,
+                    is24hour = dialog.is24hour,
+                    isAfternoon = dialog.isAfternoon,
+                    onDismissRequest = {
                         viewModel.closeDialog(dialog)
                     },
-                    onConfirm = {
-
+                    onConfirm = { hour, minute, is24hour, isAfternoon ->
+                        viewModel.setNewTime(hour, minute, is24hour, isAfternoon)
                     }
                 )
             }
